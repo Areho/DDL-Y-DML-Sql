@@ -110,3 +110,80 @@ SELECT nombre, valor FROM producto WHERE valor >= 180 ORDER BY valor DESC, nombr
 
 
 -- 1
+-- sql 1
+SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id;
+-- sql 2
+SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id;
+
+-- 2
+-- sql 1
+SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id ORDER BY f.nombre ASC;
+-- sql 2
+SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id ORDER BY f.nombre ASC;
+
+-- 3
+-- sql 1
+SELECT p.id, p.nombre, f.id, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id;
+-- sql 2
+SELECT p.id, p.nombre, f.id, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id;
+
+-- 4
+-- sql 1
+SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id ORDER BY p.valor ASC LIMIT 1;
+-- sql 2
+SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id ORDER BY p.valor ASC LIMIT 1;
+
+-- 5
+-- sql 1
+SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id ORDER BY p.valor DESC LIMIT 1;
+-- sql 2
+SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id ORDER BY p.valor DESC LIMIT 1;
+
+-- 6
+-- sql 1
+SELECT p.* FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND f.nombre = 'Lenovo';
+-- sql 2
+SELECT p.* FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Lenovo';
+
+-- 7
+-- sql 1
+SELECT p.* FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND f.nombre = 'Crucial' AND p.valor > 200;
+-- sql 2
+SELECT p.* FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Crucial' AND p.valor > 200;
+
+-- 8
+-- sql 1
+SELECT p.* FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND (f.nombre = 'Asus' OR f.nombre = 'Hewlett-Packard' OR f.nombre = 'Seagate');
+-- sql 2
+SELECT p.* FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus' OR f.nombre = 'Hewlett-Packard' OR f.nombre = 'Seagate';
+
+-- 9
+-- sql 1
+SELECT p.* FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND f.nombre IN ('Asus', 'Hewlett-Packard', 'Seagate');
+-- sql 2
+SELECT p.* FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre IN ('Asus', 'Hewlett-Packard', 'Seagate');
+
+-- 10
+-- sql 1
+SELECT p.nombre, p.valor FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND f.nombre LIKE '%e';
+-- sql 2
+SELECT p.nombre, p.valor FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre LIKE '%e';
+
+-- 11
+-- sql 1
+SELECT p.nombre, p.valor FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND f.nombre LIKE '%w%';
+-- sql 2
+SELECT p.nombre, p.valor FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre LIKE '%w%';
+
+-- 12
+-- sql 1
+SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id AND p.valor >= 180 ORDER BY p.valor DESC, p.nombre ASC;
+-- sql 2
+SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE p.valor >= 180 ORDER BY p.valor DESC, p.nombre ASC;
+
+-- 13
+-- sql 1
+SELECT DISTINCT f.id, f.nombre FROM fabricante f, producto p WHERE p.id_fabricante = f.id;
+-- sql 2
+SELECT DISTINCT f.id, f.nombre FROM fabricante f JOIN producto p ON p.id_fabricante = f.id;
+
