@@ -1,8 +1,9 @@
+DROP DATABASE IF EXISTS productosDB;
 CREATE DATABASE IF NOT EXISTS productosDB;
 USE productosDB;
 
 CREATE TABLE fabricante (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY auto_increment,
     nombre VARCHAR(100)
 );
 
