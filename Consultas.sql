@@ -108,7 +108,7 @@ SELECT nombre FROM producto WHERE nombre LIKE '%Monitor%' AND valor < 215;
 -- 36
 SELECT nombre, valor FROM producto WHERE valor >= 180 ORDER BY valor DESC, nombre ASC;
 
-
+	-- 1.1.4 Consultas multitabla (Composición interna)
 -- 1
 -- sql 1
 SELECT p.nombre, p.valor, f.nombre FROM producto p, fabricante f WHERE p.id_fabricante = f.id;
@@ -186,4 +186,254 @@ SELECT p.nombre, p.valor, f.nombre FROM producto p JOIN fabricante f ON p.id_fab
 SELECT DISTINCT f.id, f.nombre FROM fabricante f, producto p WHERE p.id_fabricante = f.id;
 -- sql 2
 SELECT DISTINCT f.id, f.nombre FROM fabricante f JOIN producto p ON p.id_fabricante = f.id;
+
+	-- 1.1.5 Consultas multitabla (Composición externa)
+-- 1
+SELECT f.nombre AS fabricante, p.nombre AS producto FROM fabricante f LEFT JOIN producto p ON f.id = p.id_fabricante;
+
+-- 2
+SELECT f.nombre AS fabricante FROM fabricante f LEFT JOIN producto p ON f.id = p.id_fabricante WHERE p.id IS NULL;
+
+-- 3 (Verificación práctica)
+SELECT * FROM producto p RIGHT JOIN fabricante f ON p.id_fabricante = f.id WHERE f.id IS NULL;
+
+
+  -- 1.1.6 Consultas resumen
+-- 1
+SELECT COUNT(*) AS total_productos FROM producto;
+
+-- 2
+SELECT COUNT(*) AS total_fabricantes FROM fabricante;
+
+-- 3
+SELECT COUNT(DISTINCT id_fabricante) AS fabricantes_diferentes FROM producto;
+
+-- 4
+SELECT AVG(valor) AS precio_promedio FROM producto;
+
+-- 5
+SELECT MIN(valor) AS precio_minimo FROM producto;
+
+-- 6
+SELECT MAX(valor) AS precio_maximo FROM producto;
+
+-- 7
+SELECT nombre, valor FROM producto ORDER BY valor ASC LIMIT 1;
+
+-- 8
+SELECT nombre, valor FROM producto ORDER BY valor DESC LIMIT 1;
+
+-- 9
+SELECT SUM(valor) AS suma_total FROM producto;
+
+-- 10
+SELECT COUNT(*) AS total FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus';
+
+-- 11
+SELECT AVG(p.valor) AS promedio FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus';
+
+-- 12
+SELECT MIN(p.valor) AS precio_minimo FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus';
+
+-- 13
+SELECT MAX(p.valor) AS precio_maximo FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus';
+
+-- 14
+SELECT SUM(p.valor) AS suma FROM producto p JOIN fabricante f ON p.id_fabricante = f.id WHERE f.nombre = 'Asus';
+
+-- 15
+SELECT 
+  MAX(p.valor) AS maximo,
+  MIN(p.valor) AS minimo,
+  AVG(p.valor) AS promedio,
+  COUNT(*) AS total
+FROM producto p
+JOIN fabricante f ON p.id_fabricante = f.id
+WHERE f.nombre = 'Crucial';
+
+-- 16
+SELECT f.nombre, COUNT(p.id) AS total FROM fabricante f LEFT JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre ORDER BY total DESC;
+
+-- 17
+SELECT f.nombre, MAX(p.valor) AS maximo, MIN(p.valor) AS minimo, AVG(p.valor) AS promedio FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre;
+
+-- 18
+SELECT p.id_fabricante FROM producto p GROUP BY p.id_fabricante HAVING AVG(p.valor) > 200;
+
+-- 19
+SELECT f.nombre, MAX(p.valor) AS maximo, MIN(p.valor) AS minimo, AVG(p.valor) AS promedio, COUNT(*) AS total FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre HAVING AVG(p.valor) > 200;
+
+-- 20
+SELECT COUNT(*) AS total FROM producto WHERE valor >= 180;
+
+-- 21
+SELECT f.nombre, COUNT(p.id) AS total FROM fabricante f JOIN producto p ON f.id = p.id_fabricante WHERE p.valor >= 180 GROUP BY f.nombre;
+
+-- 22
+SELECT id_fabricante, AVG(valor) AS promedio FROM producto GROUP BY id_fabricante;
+
+-- 23
+SELECT f.nombre, AVG(p.valor) AS promedio FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre;
+
+-- 24
+SELECT f.nombre FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre HAVING AVG(p.valor) >= 150;
+
+-- 25
+SELECT f.nombre FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre HAVING COUNT(p.id) >= 2;
+
+-- 26
+SELECT f.nombre, COUNT(p.id) AS total FROM fabricante f JOIN producto p ON f.id = p.id_fabricante WHERE p.valor >= 220 GROUP BY f.nombre;
+
+-- 27
+SELECT f.nombre, COUNT(p.id) AS total FROM fabricante f LEFT JOIN producto p ON f.id = p.id_fabricante AND p.valor >= 220 GROUP BY f.nombre;
+
+-- 28
+SELECT f.nombre FROM fabricante f JOIN producto p ON f.id = p.id_fabricante GROUP BY f.nombre HAVING SUM(p.valor) > 1000;
+
+-- 29
+SELECT p.nombre, p.valor, f.nombre
+FROM producto p
+JOIN fabricante f ON p.id_fabricante = f.id
+WHERE (p.id, p.valor) IN (
+    SELECT p2.id, MAX(p2.valor)
+    FROM producto p2
+    GROUP BY p2.id_fabricante
+)
+ORDER BY f.nombre ASC;
+
+		-- 1.1.7 Subconsultas (En la cláusula WHERE)
+	-- 1.1.7.1 Con operadores básicos de comparación
+-- 1
+SELECT * FROM producto WHERE id_fabricante = (SELECT id FROM fabricante WHERE nombre = 'Lenovo');
+
+-- 2
+SELECT * FROM producto WHERE valor = (SELECT MAX(valor) FROM producto WHERE id_fabricante = (SELECT id FROM fabricante WHERE nombre = 'Lenovo'));
+
+-- 3
+SELECT nombre
+FROM producto
+WHERE valor = (
+    SELECT MAX(valor)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+    )
+)
+AND id_fabricante = (
+    SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+);
+
+-- 4
+SELECT nombre
+FROM producto
+WHERE valor = (
+    SELECT MIN(valor)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Hewlett-Packard'
+    )
+)
+AND id_fabricante = (
+    SELECT id FROM fabricante WHERE nombre = 'Hewlett-Packard'
+);
+
+-- 5
+SELECT *
+FROM producto
+WHERE valor >= (
+    SELECT MAX(valor)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+    )
+);
+
+-- 6
+SELECT *
+FROM producto
+WHERE id_fabricante = (
+    SELECT id FROM fabricante WHERE nombre = 'Asus'
+)
+AND valor > (
+    SELECT AVG(valor)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Asus'
+    )
+);
+
+	-- 1.1.7.2 Subconsultas con ALL y ANY
+-- 7
+SELECT * FROM producto WHERE valor >= ALL (SELECT valor FROM producto);
+
+-- 8
+SELECT * FROM producto WHERE valor <= ALL (SELECT valor FROM producto);
+
+-- 9
+SELECT nombre FROM fabricante WHERE id = ANY (SELECT id_fabricante FROM producto);
+
+-- 10
+SELECT nombre FROM fabricante WHERE id <> ALL (SELECT id_fabricante FROM producto);
+
+	-- 1.1.7.3 Subconsultas con IN y NOT IN
+-- 11
+SELECT nombre FROM fabricante WHERE id IN (SELECT id_fabricante FROM producto);
+
+-- 12
+SELECT nombre FROM fabricante WHERE id NOT IN (SELECT id_fabricante FROM producto);
+
+	-- 1.1.7.4 Subconsultas con EXISTS y NOT EXISTS
+-- 13
+SELECT nombre FROM fabricante f WHERE EXISTS (SELECT 1 FROM producto p WHERE p.id_fabricante = f.id);
+
+-- 14
+SELECT nombre FROM fabricante f WHERE NOT EXISTS (SELECT 1 FROM producto p WHERE p.id_fabricante = f.id);
+
+	-- 1.1.7.5 Subconsultas correlacionadas
+-- 15
+SELECT f.nombre AS fabricante, p.nombre AS producto, p.valor
+FROM fabricante f
+JOIN producto p ON f.id = p.id_fabricante
+WHERE p.valor = (
+    SELECT MAX(p2.valor)
+    FROM producto p2
+    WHERE p2.id_fabricante = f.id
+);
+
+-- 16
+SELECT p.*
+FROM producto p
+WHERE p.valor >= (
+    SELECT AVG(p2.valor)
+    FROM producto p2
+    WHERE p2.id_fabricante = p.id_fabricante
+);
+
+-- 17
+SELECT nombre
+FROM producto
+WHERE valor = (
+    SELECT MAX(valor)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+    )
+)
+AND id_fabricante = (
+    SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+);
+
+	-- 1.1.8 Subconsultas (En la cláusula HAVING)
+-- 18
+SELECT f.nombre
+FROM fabricante f
+JOIN producto p ON f.id = p.id_fabricante
+GROUP BY f.id, f.nombre
+HAVING COUNT(p.id) = (
+    SELECT COUNT(*)
+    FROM producto
+    WHERE id_fabricante = (
+        SELECT id FROM fabricante WHERE nombre = 'Lenovo'
+    )
+);
 
